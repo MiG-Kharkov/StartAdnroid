@@ -45,14 +45,24 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        switch (id) {
+            case R.id.menu_reset:
+                etNum1.setText("");
+                etNum2.setText("");
+                tvResult.setText(" ");
 
+                break;
+            case R.id.menu_quit:
+                finish();
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     public void onButtonClick(View view) {
 
-        float num1 = 0;
-        float num2 = 0;
+        float num1;
+        float num2;
         float result = 0;
 
         // Проверяем поля на пустоту
