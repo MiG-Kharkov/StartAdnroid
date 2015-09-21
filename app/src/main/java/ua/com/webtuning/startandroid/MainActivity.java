@@ -92,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btnDiv:
                 oper = "/";
-                result = num1 / num2;
+                if (num2 != 0) result = num1 / num2;
+                else {
+                    tvResult.setText("Error");
+                    return;
+                }
                 break;
             default:
                 break;
