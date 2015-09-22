@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ActivityPushResult"
+            android:label="@string/title_activity_activity_push_result">
+        </activity>
     </application>
 
 </manifest>

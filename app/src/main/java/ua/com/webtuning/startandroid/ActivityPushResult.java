@@ -6,23 +6,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity {
-
-    private final int BUNDLE_SET = 1;
+public class ActivityPushResult extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_activity_push_result);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_push_result, menu);
         return true;
     }
 
@@ -41,17 +38,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onBtnClick(View view) {
-        Toast.makeText(this, "Click", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, ActivityPushResult.class);
-        startActivityForResult(intent, BUNDLE_SET);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data == null) return;
-        String name = data.getStringExtra("name");
-        ((TextView) findViewById(R.id.tvName)).setText("Your name: " + name);
+    public void btnOKClick(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("name", ((EditText) findViewById(R.id.etName))
+                .getText().toString());
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
