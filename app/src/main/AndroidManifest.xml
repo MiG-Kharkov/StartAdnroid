@@ -21,6 +21,7 @@
             android:label="@string/title_activity_activity_time">
             <intent-filter>
                 <action android:name="ua.com.webtuning.startandroid.intent.action.showtime" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -29,6 +30,17 @@
             android:label="@string/title_activity_activity_date">
             <intent-filter>
                 <action android:name="ua.com.webtuning.startandroid.intent.action.showdate" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".info"
+            android:label="@string/title_activity_info">
+            <intent-filter>
+                <action android:name="ua.com.webtuning.startandroid.intent.action.showdate" />
+                <action android:name="ua.com.webtuning.startandroid.intent.action.showtime" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
