@@ -1,24 +1,32 @@
 package ua.com.webtuning.startandroid;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
+public class ActivityTime extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_activity_time);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String time = sdf.format(new Date(System.currentTimeMillis()));
+
+        TextView tvTime = (TextView) findViewById(R.id.tvTime);
+        tvTime.setText(time);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_time, menu);
         return true;
     }
 
@@ -35,19 +43,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onButtonClick(View view) {
-        Intent intent;
-        switch (view.getId()) {
-            case R.id.btnDate:
-                intent = new Intent("ua.com.webtuning.startandroid.intent.action.showdate");
-                startActivity(intent);
-                break;
-            case R.id.btnTime:
-                intent = new Intent("ua.com.webtuning.startandroid.intent.action.showtime");
-                startActivity(intent);
-                break;
-        }
     }
 }
