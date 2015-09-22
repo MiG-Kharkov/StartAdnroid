@@ -18,7 +18,8 @@
         </activity>
         <activity
             android:name=".ActivityTwo"
-            android:label="@string/title_activity_activity_two">
+            android:label="@string/title_activity_activity_two"
+            android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
     </application>
 
