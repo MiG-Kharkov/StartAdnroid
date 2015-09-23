@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,15 +24,27 @@ public class MainActivity extends AppCompatActivity {
 
         LayoutInflater layoutInflater = getLayoutInflater();
 
-        View view = layoutInflater.inflate(R.layout.text, null, false);
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         LinearLayout linLayout = (LinearLayout) findViewById(R.id.linLayout);
+        View view1 = layoutInflater.inflate(R.layout.text, linLayout, false);
+        ViewGroup.LayoutParams lp1 = view1.getLayoutParams();
 
-        linLayout.addView(view);
+        Log.d(LOG_TAG, "Class of view: " + view1.getClass().toString());
+        Log.d(LOG_TAG, "LayoutParams of view is : " + lp1.getClass().toString());
+        Log.d(LOG_TAG, "Text of view: " + ((TextView) view1).getText());
 
-        Log.d(LOG_TAG, "Class of view: " + view.getClass().toString());
-        Log.d(LOG_TAG, "LayoutParams of view is null: " + (layoutParams == null));
-        Log.d(LOG_TAG, "Text of view: " + ((TextView) view).getText());
+        RelativeLayout relLayout = (RelativeLayout) findViewById(R.id.relLayout);
+        View view2 = layoutInflater.inflate(R.layout.text, relLayout, false);
+        ViewGroup.LayoutParams lp2 = view2.getLayoutParams();
+
+        Log.d(LOG_TAG, "Class of view: " + view2.getClass().toString());
+        Log.d(LOG_TAG, "LayoutParams of view is : " + lp2.getClass().toString());
+        Log.d(LOG_TAG, "Text of view: " + ((TextView) view2).getText());
+
+//        Мы находим элементы linLayout и relLayout с экрана и с помощью LayoutInflater создаем
+//        два View-элемента из layout-файла text.xml. Для первого указываем root – linLayout,
+//        для второго – relLayout. Но третий параметр attachToRoot оставляем false.
+//        Это значит, что созданный View-элемент получит LayoutParams от root-элемента,
+//        но не добавится к нему.
     }
 
     @Override
