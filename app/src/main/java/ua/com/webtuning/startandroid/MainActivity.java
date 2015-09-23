@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     final String LOG_TAG = getClass().getSimpleName();
 
     DBHelper dbHelper;
-    EditText etName, etEmail;
+    EditText etName, etEmail, etID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         etName = (EditText) findViewById(R.id.etName);
         etEmail = (EditText) findViewById(R.id.etEmail);
+        etID = (EditText) findViewById(R.id.etID);
 
         dbHelper = new DBHelper(this);
     }
@@ -55,20 +56,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void onBtnClick(View view) {
 
+        // подготовим данные для вставки\редактирования в виде пар: наименование столбца - значение
         ContentValues contentValues = new ContentValues();
-
-        String name = etName.getText().toString();
-        String email = etEmail.getText().toString();
+        contentValues.put("name", etName.getText().toString());
+        contentValues.put("email", etEmail.getText().toString());
+        String id = etID.getText().toString();
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         switch (view.getId()) {
             case R.id.btnAdd:
                 Log.d(LOG_TAG, "--- Insert in mytable: ---");
-                // подготовим данные для вставки в виде пар: наименование столбца - значение
 
-                contentValues.put("name", name);
-                contentValues.put("email", email);
                 // вставляем запись и получаем ее ID
                 long rowID = db.insert("mytable", null, contentValues);
                 Log.d(LOG_TAG, "row inserted, ID = " + rowID);
@@ -98,6 +97,19 @@ public class MainActivity extends AppCompatActivity {
 
                 int clearCount = db.delete("mytable", null, null);
                 Log.d(LOG_TAG, "deleted rows = " + clearCount);
+                break;
+            case R.id.btnUpd:
+                Log.d(LOG_TAG, "---Update mytabe ----");
+                int updCount = db.update("mytable", contentValues, "id = ?",
+                        new String[]{id});
+                Log.d(LOG_TAG, "updated rows count = " + updCount);
+                break;
+            case R.id.btnDel:
+                if (!id.equalsIgnoreCase("")) {
+                    Log.d(LOG_TAG, "--- Delete from mytabe: ---");
+                    int delCount = db.delete("mytable", "id = " + id, null);
+                    Log.d(LOG_TAG, "deleted rows count = " + delCount);
+                }
                 break;
         }
 
