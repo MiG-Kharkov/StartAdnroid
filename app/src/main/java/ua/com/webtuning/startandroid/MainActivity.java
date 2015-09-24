@@ -1,27 +1,35 @@
 package ua.com.webtuning.startandroid;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
 
-    String[] names = {"Иван", "Марья", "Петр", "Антон", "Даша", "Борис",
-            "Костя", "Игорь", "Анна", "Денис", "Андрей"};
+    final String LOG_TAG = "myLogs";
+
+    ListView lvMain;
+    String[] names;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView listView = (ListView) findViewById(R.id.lvMain);
+        lvMain = (ListView) findViewById(R.id.lvMain);
+        lvMain.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(this, R.layout.my_list_item, names);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.names, android.R.layout.simple_list_item_single_choice);
+        lvMain.setAdapter(adapter);
 
-        listView.setAdapter(adapter);
+        names = getResources().getStringArray(R.array.names);
+
 
     }
 
@@ -45,5 +53,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onBtnClick(View view) {
+        Log.d(LOG_TAG, "checked: " + names[lvMain.getCheckedItemPosition()]);
     }
 }
