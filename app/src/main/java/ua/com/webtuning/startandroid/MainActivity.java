@@ -3,6 +3,7 @@ package ua.com.webtuning.startandroid;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +23,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         lvMain = (ListView) findViewById(R.id.lvMain);
-        lvMain.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        lvMain.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.names, android.R.layout.simple_list_item_single_choice);
+                R.array.names, android.R.layout.simple_list_item_multiple_choice);
         lvMain.setAdapter(adapter);
 
         names = getResources().getStringArray(R.array.names);
@@ -56,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onBtnClick(View view) {
-        Log.d(LOG_TAG, "checked: " + names[lvMain.getCheckedItemPosition()]);
+        SparseBooleanArray sbArray = lvMain.getCheckedItemPositions();
+        for (int i = 0; i < sbArray.size(); i++) {
+            int key = sbArray.keyAt(i);
+            if (sbArray.get(key))
+                Log.d(LOG_TAG, names[key]);
+        }
     }
 }
