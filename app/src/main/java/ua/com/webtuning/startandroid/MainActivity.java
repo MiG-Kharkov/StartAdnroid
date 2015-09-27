@@ -14,8 +14,11 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     final String ATTRIBUTE_NAME_TEXT = "text";
-    final String ATTRIBUTE_NAME_CHECKED = "checked";
+    final String ATTRIBUTE_NAME_VALUE = "value";
     final String ATTRIBUTE_NAME_IMAGE = "image";
+
+    final int positive = android.R.drawable.arrow_up_float;
+    final int negative = android.R.drawable.arrow_down_float;
 
     ListView lvSimple;
 
@@ -24,24 +27,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] texts = {"sometext 1", "sometext 2", "sometext 3",
-                "sometext 4", "sometext 5"};
-        boolean[] checked = {true, false, false, true, false};
-        int img = R.mipmap.ic_launcher;
+        // массив данных
+        int[] values = {8, 4, -3, 2, -5, 0, 3, -6, 1, -1};
 
-        ArrayList<Map<String, Object>> data = new ArrayList<>(texts.length);
+        ArrayList<Map<String, Object>> data = new ArrayList<>(values.length);
         Map<String, Object> m;
-        for (int i = 0; i < texts.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             m = new HashMap<>();
-            m.put(ATTRIBUTE_NAME_TEXT, texts[i]);
-            m.put(ATTRIBUTE_NAME_CHECKED, checked[i]);
-            m.put(ATTRIBUTE_NAME_IMAGE, img);
+            m.put(ATTRIBUTE_NAME_TEXT, "Day " + i + 1);
+            m.put(ATTRIBUTE_NAME_VALUE, values[i]);
+            if (values[i] > 0) m.put(ATTRIBUTE_NAME_IMAGE, positive);
+            else m.put(ATTRIBUTE_NAME_IMAGE, negative);
             data.add(m);
         }
 
 
-        String[] from = {ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_CHECKED, ATTRIBUTE_NAME_IMAGE};
-        int[] to = {R.id.tvText, R.id.cdChecked, R.id.ivImg};
+        String[] from = {ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_VALUE, ATTRIBUTE_NAME_IMAGE};
+        int[] to = {R.id.tvText, R.id.tvValue, R.id.ivImg};
 
         SimpleAdapter adapter = new SimpleAdapter(this, data, R.layout.item, from, to);
 
