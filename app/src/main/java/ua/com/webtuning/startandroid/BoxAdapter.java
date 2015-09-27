@@ -62,7 +62,7 @@ public class BoxAdapter extends BaseAdapter {
         // заполняем View в пункте списка данными из товаров: наименование, цена
         // и картинка
         ((TextView) view.findViewById(R.id.tvDescr)).setText(p.name);
-        ((TextView) view.findViewById(R.id.tvPrice)).setText(p.price + "");
+        ((TextView) view.findViewById(R.id.tvPrice)).setText(Integer.toString(p.price));
         ((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);
 
         CheckBox cbBuy = (CheckBox) view.findViewById(R.id.cbBox);

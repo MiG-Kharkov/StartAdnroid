@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     ArrayList<Product> products = new ArrayList<>();
     BoxAdapter boxAdapter;
+
+    View header;
+    View footer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +26,28 @@ public class MainActivity extends AppCompatActivity {
         fillData();
         boxAdapter = new BoxAdapter(this, products);
         ListView lvMain = (ListView) findViewById(R.id.lvMain);
+
+        header = createHeader("header 1");
+        footer = createFooter("Footer 2");
+
+        lvMain.addHeaderView(header);
+        lvMain.addFooterView(footer);
+
         lvMain.setAdapter(boxAdapter);
+
+
+    }
+
+    private View createFooter(String s) {
+        View v = getLayoutInflater().inflate(R.layout.footer, null);
+        ((TextView) v.findViewById(R.id.tvText)).setText(s);
+        return v;
+    }
+
+    private View createHeader(String s) {
+        View v = getLayoutInflater().inflate(R.layout.header, null);
+        ((TextView) v.findViewById(R.id.tvText)).setText(s);
+        return v;
     }
 
     private void fillData() {
