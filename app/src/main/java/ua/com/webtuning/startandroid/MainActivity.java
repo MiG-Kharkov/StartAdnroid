@@ -3,6 +3,7 @@ package ua.com.webtuning.startandroid;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final int DIALOG_DATE = 2;
@@ -77,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
             showDialog(DIALOG_DATE);
         else if (view.getId() == R.id.tvTime)
             showDialog(DIALOG_TIME);
+        else if (view.getId() == R.id.tvFragment) {
+            MyDialogFragment myDialogFragment = MyDialogFragment.newInstance();
+            myDialogFragment.show(getFragmentManager(), "myDialogFragment");
+        }
     }
 
     @Override
@@ -90,5 +96,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onCreateDialog(id);
+    }
+
+    public void okClicked() {
+        Toast.makeText(MainActivity.this, "Вы выбрали кнопку OK!",
+                Toast.LENGTH_LONG).show();
+    }
+
+    public void cancelClicked() {
+        Toast.makeText(MainActivity.this, "Вы выбрали кнопку отмены!",
+                Toast.LENGTH_LONG).show();
     }
 }
