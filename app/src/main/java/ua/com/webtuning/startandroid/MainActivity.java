@@ -108,4 +108,9 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this, "Вы выбрали кнопку отмены!",
                 Toast.LENGTH_LONG).show();
     }
+
+    public void doNeutralClick() {
+        Toast.makeText(MainActivity.this, "Вы выбрали кнопку нейтрально!",
+                Toast.LENGTH_LONG).show();
+    }
 }

@@ -37,6 +37,13 @@ public class MyAlertDialogFragment extends DialogFragment {
                             }
                         }
                 )
+                .setNeutralButton(R.string.alert_neutral_buttom, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ((MainActivity) getActivity()).doNeutralClick();
+
+                    }
+                })
                 .create();
     }
 }
