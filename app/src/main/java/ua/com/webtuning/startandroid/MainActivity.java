@@ -80,8 +80,9 @@ public class MainActivity extends AppCompatActivity {
         else if (view.getId() == R.id.tvTime)
             showDialog(DIALOG_TIME);
         else if (view.getId() == R.id.tvFragment) {
-            MyDialogFragment myDialogFragment = MyDialogFragment.newInstance();
-            myDialogFragment.show(getFragmentManager(), "myDialogFragment");
+            DialogFragment newFragment =
+                    MyAlertDialogFragment.newInstance(R.string.alert_two_buttons_title);
+            newFragment.show(getFragmentManager(), "myDialogFragment");
         }
     }
 
@@ -98,12 +99,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateDialog(id);
     }
 
-    public void okClicked() {
+    public void doPositiveClick() {
         Toast.makeText(MainActivity.this, "Вы выбрали кнопку OK!",
                 Toast.LENGTH_LONG).show();
     }
 
-    public void cancelClicked() {
+    public void doNegativeClick() {
         Toast.makeText(MainActivity.this, "Вы выбрали кнопку отмены!",
                 Toast.LENGTH_LONG).show();
     }
