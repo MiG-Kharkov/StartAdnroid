@@ -6,10 +6,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "myLogs";
+    int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +60,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState");
+        outState.putInt("count", count);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.d(LOG_TAG, "onRestoreInstanceState");
+        count = savedInstanceState.getInt("count");
     }
 
     @Override
@@ -90,5 +94,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onclick(View view) {
+        Toast.makeText(this, "Count = " + ++count, Toast.LENGTH_SHORT).show();
     }
+
+    //Альернативно можно сохранить  через return myObj; любой объект, потом его восстановить
+    //в onCreate     myObj = (MyObject) getLastNonConfigurationInstance();
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        return super.onRetainCustomNonConfigurationInstance();
+    }
+
 }
