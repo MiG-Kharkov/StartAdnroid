@@ -2,9 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
         android:key="chb"
-        android:summary="Description of checkbox"
+        android:summaryOff="Description of checkbox OFF"
+        android:summaryOn="Description of checkbox ON"
         android:title="Checkbox Title" />
     <ListPreference
+        android:dependency="chb"
         android:entries="@array/entries"
         android:entryValues="@array/entery_values"
         android:key="list"
@@ -20,7 +22,8 @@
             android:title="Category 1">
             <CheckBoxPreference
                 android:key="chb1"
-                android:summary="Description of checkbox1"
+                android:summaryOff="Description of checkbox2 OFF for Cat2"
+                android:summaryOn="Description of checkbox1 ON for Cat2"
                 android:title="Checkbox1" />
             <CheckBoxPreference
                 android:key="chb2"
@@ -32,6 +35,7 @@
                 android:title="Checkbox3" />
         </PreferenceCategory>
         <PreferenceCategory
+            android:dependency="chb1"
             android:key="categ2"
             android:summary="Description of category2"
             android:title="Category 2">
