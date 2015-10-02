@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     final int STATUS_DOWNLOAD_END = 5; // загрузка закончена
     final int STATUS_DOWNLOAD_NONE = 6; // загрузка закончена
 
-    Handler h;
+    Handler handler;
 
     TextView tvStatus;
     ProgressBar pbDownload;
@@ -41,44 +42,8 @@ public class MainActivity extends AppCompatActivity {
         pbDownload = (ProgressBar) findViewById(R.id.pbDownload);
         btnConnect = (Button) findViewById(R.id.btnConnect);
 
-        h = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                switch (msg.what) {
-                    case STATUS_NONE:
-                        btnConnect.setEnabled(true);
-                        tvStatus.setText("Not connected");
-                        pbDownload.setVisibility(View.GONE);
-                        break;
-                    case STATUS_CONNECTING:
-                        btnConnect.setEnabled(false);
-                        tvStatus.setText("Connecting");
-                        break;
-                    case STATUS_CONNECTED:
-                        tvStatus.setText("Connected");
-                        break;
-                    case STATUS_DOWNLOAD_START:
-                        tvStatus.setText("Start download " + msg.arg1 + " files");
-                        pbDownload.setMax(msg.arg1);
-                        pbDownload.setProgress(0);
-                        pbDownload.setVisibility(View.VISIBLE);
-                        break;
-                    case STATUS_DOWNLOAD_FILE:
-                        tvStatus.setText("Downloading. Left " + msg.arg2 + " files");
-                        pbDownload.setProgress(msg.arg1);
-                        saveFile((byte[]) msg.obj);
-                        break;
-                    case STATUS_DOWNLOAD_END:
-                        tvStatus.setText("Download complete!");
-                        break;
-                    case STATUS_DOWNLOAD_NONE:
-                        tvStatus.setText("No files for download");
-                        break;
-                }
-            }
-
-            ;
-        };
-        h.sendEmptyMessage(STATUS_NONE);
+        handler = new MyHandler(this);
+        handler.sendEmptyMessage(STATUS_NONE);
     }
 
     private void saveFile(byte[] obj) {
@@ -116,11 +81,11 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     // устанавливаем подключение
-                    h.sendEmptyMessage(STATUS_CONNECTING);
+                    handler.sendEmptyMessage(STATUS_CONNECTING);
                     TimeUnit.SECONDS.sleep(1);
 
                     // подключение установлено
-                    h.sendEmptyMessage(STATUS_CONNECTED);
+                    handler.sendEmptyMessage(STATUS_CONNECTED);
 
                     // определяем кол-во файлов
                     TimeUnit.SECONDS.sleep(1);
@@ -128,18 +93,18 @@ public class MainActivity extends AppCompatActivity {
 
                     if (filesCount == 0) {
                         // сообщаем, что файлов для загрузки нет
-                        h.sendEmptyMessage(STATUS_DOWNLOAD_NONE);
+                        handler.sendEmptyMessage(STATUS_DOWNLOAD_NONE);
                         // и отключаемся
                         TimeUnit.MILLISECONDS.sleep(1500);
-                        h.sendEmptyMessage(STATUS_NONE);
+                        handler.sendEmptyMessage(STATUS_NONE);
                         return;
                     }
 
                     // загрузка начинается
                     // создаем сообщение, с информацией о количестве файлов
-                    msg = h.obtainMessage(STATUS_DOWNLOAD_START, filesCount, 0);
+                    msg = handler.obtainMessage(STATUS_DOWNLOAD_START, filesCount, 0);
                     // отправляем
-                    h.sendMessage(msg);
+                    handler.sendMessage(msg);
 
                     for (int i = 1; i <= filesCount; i++) {
                         // загружается файл
@@ -147,18 +112,18 @@ public class MainActivity extends AppCompatActivity {
                         // создаем сообщение с информацией о порядковом номере
                         // файла,
                         // кол-вом оставшихся и самим файлом
-                        msg = h.obtainMessage(STATUS_DOWNLOAD_FILE, i,
+                        msg = handler.obtainMessage(STATUS_DOWNLOAD_FILE, i,
                                 filesCount - i, file);
                         // отправляем
-                        h.sendMessage(msg);
+                        handler.sendMessage(msg);
                     }
 
                     // загрузка завершена
-                    h.sendEmptyMessage(STATUS_DOWNLOAD_END);
+                    handler.sendEmptyMessage(STATUS_DOWNLOAD_END);
 
                     // отключаемся
                     TimeUnit.MILLISECONDS.sleep(1500);
-                    h.sendEmptyMessage(STATUS_NONE);
+                    handler.sendEmptyMessage(STATUS_NONE);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -171,5 +136,55 @@ public class MainActivity extends AppCompatActivity {
     private byte[] downloadFile() throws InterruptedException {
         TimeUnit.SECONDS.sleep(2);
         return new byte[1024];
+    }
+
+    void workingInActivity(Message msg) {
+        switch (msg.what) {
+            case STATUS_NONE:
+                btnConnect.setEnabled(true);
+                tvStatus.setText("Not connected");
+                pbDownload.setVisibility(View.GONE);
+                break;
+            case STATUS_CONNECTING:
+                btnConnect.setEnabled(false);
+                tvStatus.setText("Connecting");
+                break;
+            case STATUS_CONNECTED:
+                tvStatus.setText("Connected");
+                break;
+            case STATUS_DOWNLOAD_START:
+                tvStatus.setText("Start download " + msg.arg1 + " files");
+                pbDownload.setMax(msg.arg1);
+                pbDownload.setProgress(0);
+                pbDownload.setVisibility(View.VISIBLE);
+                break;
+            case STATUS_DOWNLOAD_FILE:
+                tvStatus.setText("Downloading. Left " + msg.arg2 + " files");
+                pbDownload.setProgress(msg.arg1);
+                saveFile((byte[]) msg.obj);
+                break;
+            case STATUS_DOWNLOAD_END:
+                tvStatus.setText("Download complete!");
+                break;
+            case STATUS_DOWNLOAD_NONE:
+                tvStatus.setText("No files for download");
+                break;
+        }
+    }
+
+    static private class MyHandler extends Handler {
+        WeakReference<MainActivity> weakReference;
+
+        public MyHandler(MainActivity activity) {
+            weakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            MainActivity activity = weakReference.get();
+            if (activity != null) activity.workingInActivity(msg);
+
+        }
     }
 }
