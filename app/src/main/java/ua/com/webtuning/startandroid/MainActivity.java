@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     final int MAX = 100;
     ProgressBar progressBar;
     TextView tvInfo;
+    TextView tvInfo1;
     CheckBox chbInfo;
     int cnt = 0;
     Handler handler;
@@ -42,6 +43,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    Runnable run1 = new Runnable() {
+        @Override
+        public void run() {
+            tvInfo1.setText("run1");
+        }
+    };
+    Runnable run2 = new Runnable() {
+        @Override
+        public void run() {
+            tvInfo1.setText("run2");
+        }
+    };
+    Runnable run3 = new Runnable() {
+        @Override
+        public void run() {
+            tvInfo1.setText("run3");
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setProgress(0);
 
         tvInfo = (TextView) findViewById(R.id.tvInfo);
+        tvInfo1 = (TextView) findViewById(R.id.tvInfo1);
         chbInfo = (CheckBox) findViewById(R.id.chbInfo);
 
         chbInfo.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -74,10 +96,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    //add lesson 85
+                    TimeUnit.SECONDS.sleep(2);
+                    runOnUiThread(run1);
+                    TimeUnit.SECONDS.sleep(1);
+                    tvInfo1.postDelayed(run3, 2000);
+                    tvInfo1.post(run2);
+
+
                     for (cnt = 1; cnt < MAX; cnt++) {
 
                         TimeUnit.MILLISECONDS.sleep(100);
-                        Log.d(LOG_TAG, "Cnt = " + cnt);
                         //update information
                         handler.post(updateProgress);
                     }
