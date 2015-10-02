@@ -7,11 +7,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = "myLogs";
     MyTask myTask;
     TextView tvInfo;
 
@@ -47,14 +50,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onclick(View view) {
-        myTask = new MyTask();
-        myTask.execute("file_1", "file2", "file3", "file4");
+        switch (view.getId()) {
+            case R.id.btnStart:
+                myTask = new MyTask();
+                myTask.execute("file_1", "file2", "file3", "file4");
+                break;
+            case R.id.btnGetRes:
+                int result;
+                if (myTask == null) return;
+                try {
+                    result = myTask.get();
+                    //It stops UI if result is not ready!!!
+                    Toast.makeText(this, "get returns " + result, Toast.LENGTH_LONG).show();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
     }
 
-    private class MyTask extends AsyncTask<String, Integer, Void> {
+    private class MyTask extends AsyncTask<String, Integer, Integer> {
 
         @Override
-        protected Void doInBackground(String... urls) {
+        protected Integer doInBackground(String... urls) {
             try {
                 int cnt = 0;
                 for (String url : urls) {
@@ -68,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return null;
+            return urls.length;
         }
 
         private void downloadFile(String url) throws InterruptedException {
@@ -82,9 +102,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            tvInfo.setText("End");
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            tvInfo.setText("End process with " + result + " files");
         }
     }
 }
