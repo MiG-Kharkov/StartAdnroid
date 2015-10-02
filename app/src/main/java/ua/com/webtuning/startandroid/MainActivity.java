@@ -24,6 +24,20 @@ public class MainActivity extends AppCompatActivity {
 
         tvInfo = (TextView) findViewById(R.id.tvInfo);
 
+        myTask = (MyTask) getLastCustomNonConfigurationInstance();
+        if (myTask == null) {
+            myTask = new MyTask();
+            myTask.execute("file1", "file2", "file3", "file4");
+        }
+        // передаем в MyTask ссылку на текущее MainActivity
+        myTask.link(this);
+
+    }
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        myTask.unLink();
+        return myTask;
     }
 
     @Override
@@ -50,10 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void onclick(View view) {
         switch (view.getId()) {
-            case R.id.btnStart:
-                myTask = new MyTask();
-                myTask.execute("file_1", "file2", "file3", "file4");
-                break;
             case R.id.btnStatus:
                 if (myTask != null)
                     Toast.makeText(this, myTask.getStatus().toString(), Toast.LENGTH_SHORT).show();
@@ -65,7 +75,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class MyTask extends AsyncTask<String, Integer, Integer> {
+    static class MyTask extends AsyncTask<String, Integer, Integer> {
+
+        MainActivity activity;
+
+        void link(MainActivity activity) {
+            this.activity = activity;
+        }
+
+        void unLink() {
+            activity = null;
+        }
 
         @Override
         protected Integer doInBackground(String... urls) {
@@ -93,19 +113,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            tvInfo.setText("Downloaded " + values[0] + " from " + values[1] + " files.");
+            activity.tvInfo.setText("Downloaded " + values[0] + " from " + values[1] + " files.");
         }
 
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            tvInfo.setText("End process with " + result + " files");
+            if (activity != null) activity.tvInfo.setText("End process with " + result + " files");
         }
 
         @Override
         protected void onCancelled(Integer result) {
             super.onCancelled(result);
-            tvInfo.setText("End canceled with " + result + " result.");
+            activity.tvInfo.setText("End canceled with " + result + " result.");
         }
     }
 }
