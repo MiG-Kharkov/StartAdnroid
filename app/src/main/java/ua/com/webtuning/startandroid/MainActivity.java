@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,17 +57,24 @@ public class MainActivity extends AppCompatActivity {
                 myTask.execute("file_1", "file2", "file3", "file4");
                 break;
             case R.id.btnGetRes:
-                int result;
+                int result = -1;
                 if (myTask == null) return;
                 try {
-                    result = myTask.get();
-                    //It stops UI if result is not ready!!!
+                    result = myTask.get(1, TimeUnit.SECONDS);
+                    //Не блокируется, ждут и вылетает по exception
                     Toast.makeText(this, "get returns " + result, Toast.LENGTH_LONG).show();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
+                } catch (TimeoutException e) {
+                    Toast.makeText(this, "get timeout!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
                 }
+                break;
+            case R.id.btnCancel:
+                if (myTask == null) return;
+                myTask.cancel(false);
                 break;
         }
     }
@@ -82,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     downloadFile(url);
                     // выводим промежуточные результаты
                     publishProgress(++cnt, urls.length);
+                    if (isCancelled()) return -1;
                 }
                 // разъединяемся
                 TimeUnit.SECONDS.sleep(1);
@@ -105,6 +114,12 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             tvInfo.setText("End process with " + result + " files");
+        }
+
+        @Override
+        protected void onCancelled(Integer result) {
+            super.onCancelled(result);
+            tvInfo.setText("End canceled with " + result + " result.");
         }
     }
 }
