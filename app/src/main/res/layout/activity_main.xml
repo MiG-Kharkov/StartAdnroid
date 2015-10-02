@@ -13,11 +13,11 @@
         android:text="@string/start" />
 
     <Button
-        android:id="@+id/btnGetRes"
+        android:id="@+id/btnStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onclick"
-        android:text="Get Result" />
+        android:text="Show Status" />
 
     <Button
         android:id="@+id/btnCancel"

@@ -9,9 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,21 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 myTask = new MyTask();
                 myTask.execute("file_1", "file2", "file3", "file4");
                 break;
-            case R.id.btnGetRes:
-                int result = -1;
-                if (myTask == null) return;
-                try {
-                    result = myTask.get(1, TimeUnit.SECONDS);
-                    //Не блокируется, ждут и вылетает по exception
-                    Toast.makeText(this, "get returns " + result, Toast.LENGTH_LONG).show();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (TimeoutException e) {
-                    Toast.makeText(this, "get timeout!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
+            case R.id.btnStatus:
+                if (myTask != null)
+                    Toast.makeText(this, myTask.getStatus().toString(), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btnCancel:
                 if (myTask == null) return;
