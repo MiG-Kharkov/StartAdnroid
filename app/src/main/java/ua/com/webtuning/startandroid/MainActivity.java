@@ -1,7 +1,9 @@
 package ua.com.webtuning.startandroid;
 
-import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,16 +16,22 @@ public class MainActivity extends AppCompatActivity {
 
     public final static int STATUS_START = 100;
     public final static int STATUS_FINISH = 200;
+
     public final static String PARAM_TIME = "time";
-    public final static String PARAM_PINTENT = "pendingIntent";
+    public final static String PARAM_TASK = "task";
     public final static String PARAM_RESULT = "result";
+    public final static String PARAM_STATUS = "status";
+    public final static String BROADCAST_ACTION = "ua.com.webtuning.startandroid.breadcast";
     final String LOG_TAG = "myLogs";
     final int TASK1_CODE = 1;
     final int TASK2_CODE = 2;
     final int TASK3_CODE = 3;
+
     TextView tvTask1;
     TextView tvTask2;
     TextView tvTask3;
+
+    BroadcastReceiver broadcastReceiver;
 
 
     @Override
@@ -36,6 +44,50 @@ public class MainActivity extends AppCompatActivity {
         tvTask2.setText("Task2");
         tvTask3 = (TextView) findViewById(R.id.tvTask3);
         tvTask3.setText("Task3");
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int task = intent.getIntExtra(PARAM_TASK, 0);
+                int status = intent.getIntExtra(PARAM_STATUS, 0);
+
+                Log.d(LOG_TAG, "onReceive: task = " + task + ", status = " + status);
+
+                // Ловим сообщения о старте задач
+                if (status == STATUS_START) {
+                    switch (task) {
+                        case TASK1_CODE:
+                            tvTask1.setText("Task1 start");
+                            break;
+                        case TASK2_CODE:
+                            tvTask2.setText("Task2 start");
+                            break;
+                        case TASK3_CODE:
+                            tvTask3.setText("Task3 start");
+                            break;
+                    }
+                }
+                // Ловим сообщения об окончании задач
+                if (status == STATUS_FINISH) {
+                    int result = intent.getIntExtra(PARAM_RESULT, 0);
+                    switch (task) {
+                        case TASK1_CODE:
+                            tvTask1.setText("Task1 finish, result = " + result);
+                            break;
+                        case TASK2_CODE:
+                            tvTask2.setText("Task2 finish, result = " + result);
+                            break;
+                        case TASK3_CODE:
+                            tvTask3.setText("Task3 finish, result = " + result);
+                            break;
+                    }
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(broadcastReceiver, intentFilter);
+
     }
 
     @Override
@@ -61,72 +113,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickStart(View view) {
-        PendingIntent pi;
         Intent intent;
 
-        intent = new Intent(this, MyService.class);
-        // Создаем PendingIntent для Task1
-        pi = createPendingResult(TASK1_CODE, intent, 0);
-        // Создаем Intent для вызова сервиса, кладем туда параметр времени
-        // и созданный PendingIntent
-        intent.putExtra(PARAM_TIME, 7).putExtra(PARAM_PINTENT, pi);
-        // стартуем сервис
+        intent = new Intent(this, MyService.class).putExtra(PARAM_TIME, 7)
+                .putExtra(PARAM_TASK, TASK1_CODE);
         startService(intent);
 
-        intent = new Intent(this, MyService.class);
-        // Создаем PendingIntent для Task1
-        pi = createPendingResult(TASK2_CODE, intent, 0);
-        // Создаем Intent для вызова сервиса, кладем туда параметр времени
-        // и созданный PendingIntent
-        intent.putExtra(PARAM_TIME, 4).putExtra(PARAM_PINTENT, pi);
-        // стартуем сервис
+        intent = new Intent(this, MyService.class).putExtra(PARAM_TIME, 4)
+                .putExtra(PARAM_TASK, TASK2_CODE);
         startService(intent);
 
-        intent = new Intent(this, MyService.class);
-        // Создаем PendingIntent для Task1
-        pi = createPendingResult(TASK3_CODE, intent, 0);
-        // Создаем Intent для вызова сервиса, кладем туда параметр времени
-        // и созданный PendingIntent
-        intent.putExtra(PARAM_TIME, 6).putExtra(PARAM_PINTENT, pi);
-        // стартуем сервис
+        intent = new Intent(this, MyService.class).putExtra(PARAM_TIME, 6)
+                .putExtra(PARAM_TASK, TASK3_CODE);
         startService(intent);
 
 
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(LOG_TAG, "requestCode = " + requestCode + ", resultCode = "
-                + resultCode);
-        // Ловим сообщения о старте задач
-        if (resultCode == STATUS_START) {
-            switch (requestCode) {
-                case TASK1_CODE:
-                    tvTask1.setText("Task1 start");
-                    break;
-                case TASK2_CODE:
-                    tvTask2.setText("Task2 start");
-                    break;
-                case TASK3_CODE:
-                    tvTask3.setText("Task3 start");
-                    break;
-            }
-        }
-        // Ловим сообщения об окончании задач
-        if (resultCode == STATUS_FINISH) {
-            int result = data.getIntExtra(PARAM_RESULT, 0);
-            switch (requestCode) {
-                case TASK1_CODE:
-                    tvTask1.setText("Task1 finish, result = " + result);
-                    break;
-                case TASK2_CODE:
-                    tvTask2.setText("Task2 finish, result = " + result);
-                    break;
-                case TASK3_CODE:
-                    tvTask3.setText("Task3 finish, result = " + result);
-                    break;
-            }
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 }

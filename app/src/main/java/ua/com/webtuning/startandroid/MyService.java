@@ -1,6 +1,5 @@
 package ua.com.webtuning.startandroid;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -41,10 +40,11 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "MyService onStartCommand");
-        int time = intent.getIntExtra(MainActivity.PARAM_TIME, 1);
-        PendingIntent pi = intent.getParcelableExtra(MainActivity.PARAM_PINTENT);
 
-        MyRun mr = new MyRun(time, startId, pi);
+        int time = intent.getIntExtra(MainActivity.PARAM_TIME, 1);
+        int task = intent.getIntExtra(MainActivity.PARAM_TASK, 0);
+
+        MyRun mr = new MyRun(time, startId, task);
         es.execute(mr);
 
         return super.onStartCommand(intent, flags, startId);
@@ -53,28 +53,32 @@ public class MyService extends Service {
     private class MyRun implements Runnable {
         int time;
         int startId;
-        PendingIntent pi;
+        int task;
 
-        public MyRun(int time, int startId, PendingIntent pi) {
+        public MyRun(int time, int startId, int task) {
             this.time = time;
             this.startId = startId;
-            this.pi = pi;
+            this.task = task;
             Log.d(LOG_TAG, "MyRun#" + startId + " create");
         }
 
 
         @Override
         public void run() {
+
+            Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
             Log.d(LOG_TAG, "MyRun#" + startId + " start, time = " + time);
+
             try {
-                pi.send(MainActivity.STATUS_START);
+                intent.putExtra(MainActivity.PARAM_TASK, task);
+                intent.putExtra(MainActivity.PARAM_STATUS, MainActivity.STATUS_START);
+                sendBroadcast(intent);
 
                 TimeUnit.SECONDS.sleep(time);
 
-                Intent intent = new Intent().putExtra(MainActivity.PARAM_RESULT, time * 100);
-                pi.send(MyService.this, MainActivity.STATUS_FINISH, intent);
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
+                intent.putExtra(MainActivity.PARAM_STATUS, MainActivity.STATUS_FINISH);
+                intent.putExtra(MainActivity.PARAM_RESULT, time * 100);
+                sendBroadcast(intent);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
