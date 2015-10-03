@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MyService extends Service {
 
-    private static final int MULTY_THREADS = 1;
+    private static final int MULTY_THREADS = 3;
     final String LOG_TAG = "myLogs";
     ExecutorService executorService;
     Object someResult;
@@ -79,8 +79,8 @@ public class MyService extends Service {
         }
 
         void stop() {
-            Log.d(LOG_TAG, "MyRun =" + startId + " end, stopSelf(" + startId + ")");
-            stopSelf(startId);
+            Log.d(LOG_TAG, "MyRun#" + startId + " end, stopSelfResult("
+                    + startId + ") = " + stopSelfResult(startId));
         }
 
 
