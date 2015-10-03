@@ -1,9 +1,11 @@
 package ua.com.webtuning.startandroid;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,5 +35,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickStart(View view) {
+        startService(new Intent(this, MyService.class).putExtra("time", 7));
+        startService(new Intent(this, MyService.class).putExtra("time", 2));
+        startService(new Intent(this, MyService.class).putExtra("time", 4));
     }
 }
